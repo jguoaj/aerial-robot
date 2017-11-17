@@ -6,7 +6,6 @@ x2 = (sin(theta0)*sin(theta1))/cos(theta0)*ang_v0 + ang_v1 + (-(cos(theta1)*sin(
 x3 = -sin(theta1)/cos(theta0)*ang_v0 + cos(theta1)/cos(theta0)*ang_v2;
 G_inv_dot = jacobian([x1; x2; x3], [theta0 theta1 theta2])
 
-
 syms theta0 theta1 theta2 ang_v0 ang_v1 ang_v2 lin_a0 lin_a1 lin_a2 
 R1 = [cos(theta2)*cos(theta1)-sin(theta0)*sin(theta1)*sin(theta2), -cos(theta0)*sin(theta2), cos(theta2)*sin(theta1)+cos(theta1)*sin(theta0)*sin(theta2);
      cos(theta1)*sin(theta2)+cos(theta2)*sin(theta0)*sin(theta1), cos(theta0)*cos(theta2), sin(theta2)*sin(theta1)-cos(theta2)*cos(theta1)*sin(theta0);
