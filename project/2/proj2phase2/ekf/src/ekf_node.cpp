@@ -149,6 +149,8 @@ void odom_callback(const nav_msgs::Odometry::ConstPtr &msg)
     zt << Twi, rpy_wi;
     zt_g << zt(0,0)-x(0,0), zt(1,0)-x(1,0), zt(2,0)-x(2,0), zt(3,0)-x(3,0), zt(4,0)-x(4,0), zt(5,0)-x(5,0);
 
+    // Be careful about the discontinuous nature in Euler angles 
+    // when you obtain the Roll, Pitch and Yaw angles from rotation matrix.
     if(zt_g(3,0) > pi)
         zt_g(3,0) -= 2*pi;
     else if(zt_g(3,0) < -pi)
