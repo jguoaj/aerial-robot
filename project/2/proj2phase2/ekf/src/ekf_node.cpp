@@ -93,12 +93,16 @@ void imu_callback(const sensor_msgs::Imu::ConstPtr &msg)
 
     // publish the information
     Vector3d x_rpy;
+    Matrix3d Rtag2ctrl;
     x_rpy << x(3,0), x(4,0), x(5,0);
+    Rtag2ctrl << 0, -1,  0,
+                -1,  0,  0,
+                 0,  0, -1;
 
     cout << "value x is: " << x << endl;
 
     Quaterniond Q_yourwork;
-    Q_yourwork = rpy_to_R(x_rpy);
+    Q_yourwork = Rtag2ctrl * rpy_to_R(x_rpy);
     nav_msgs::Odometry ekf_odom;
     ekf_odom.header.stamp = msg->header.stamp;
     ekf_odom.header.frame_id = "world";
@@ -194,7 +198,10 @@ int main(int argc, char **argv)
     ros::Subscriber s2 = n.subscribe("tag_odom", 1000, odom_callback);
     odom_pub = n.advertise<nav_msgs::Odometry>("ekf_odom", 100);
 
-    Rcam = Quaterniond(0, 1, 0, 0).toRotationMatrix();
+    //Rcam = Quaterniond(0, 1, 0, 0).toRotationMatrix();
+    Rcam << 0, -1,  0,
+           -1,  0,  0,
+            0,  0, -1;
     cout << "R_cam" << endl << Rcam << endl;
     
     // Q imu covariance matrix; Rt visual odomtry covariance matrix
