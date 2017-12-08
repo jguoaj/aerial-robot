@@ -95,10 +95,11 @@ void imu_callback(const sensor_msgs::Imu::ConstPtr &msg)
     cur_t = msg->header.stamp.toSec();
 
     // publish the information
-    Vector3d x_rpy, x_position;
+    Vector3d x_rpy, x_position, x_velocity;
     Matrix3d Rtag2ctrl;
     x_rpy << x(3,0), x(4,0), x(5,0);
     x_position << x(0,0), x(1,0), x(2,0);
+    x_velocity << x(6,0), x(7,0), x(8,0);
     Rtag2ctrl << 0, -1,  0,
                 -1,  0,  0,
                  0,  0, -1;
@@ -106,6 +107,7 @@ void imu_callback(const sensor_msgs::Imu::ConstPtr &msg)
     //cout << "value x is: " << x << endl;
 
     x_position = Rtag2ctrl * x_position;
+    x_velocity = Rtag2ctrl * x_velocity;
 
     Quaterniond Q_yourwork;
     Q_yourwork = Rtag2ctrl * rpy_to_R(x_rpy);
@@ -119,9 +121,9 @@ void imu_callback(const sensor_msgs::Imu::ConstPtr &msg)
     ekf_odom.pose.pose.orientation.x = Q_yourwork.x();
     ekf_odom.pose.pose.orientation.y = Q_yourwork.y();
     ekf_odom.pose.pose.orientation.z = Q_yourwork.z();
-    ekf_odom.twist.twist.linear.x = x(6,0);
-    ekf_odom.twist.twist.linear.y = x(7,0);
-    ekf_odom.twist.twist.linear.z = x(8,0);
+    ekf_odom.twist.twist.linear.x = x_velocity(0,0);
+    ekf_odom.twist.twist.linear.y = x_velocity(1,0);
+    ekf_odom.twist.twist.linear.z = x_velocity(2,0);
     odom_pub.publish(ekf_odom);
 
     // publish path
